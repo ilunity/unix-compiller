@@ -7,6 +7,7 @@ then
 	exit 1
 fi
 
+initDir=$(pwd)
 
 tempDir=$(mktemp -d)
 trap "rm -rf ${temp_dir}" EXIT HUP INT QUIT TERM PIPE
@@ -18,15 +19,19 @@ then
   exit 2
 fi
 
-tempOutputFile="${tempDir}/${outputFile}"
 
-g++ $inputFile -o $tempOutputFile
+cp $inputFile $tempDir
+cd $tempDir
+
+g++ $inputFile -o $outputFile
 if [ $? -ne 0 ]
 then
 	echo 'Failed to compile'
 	exit 3
 fi
 
-mv $tempOutputFile ./
+mv $outputFile $initDir
+cd $initDir
+
 echo Compilled
 exit 0
